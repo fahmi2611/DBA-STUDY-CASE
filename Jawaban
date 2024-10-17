@@ -1,0 +1,66 @@
+Halo, Perkenalkan saya Muhammad Fahmi. File ini bertujuan untuk menjawab soal study case yang diberikan sebagai assesment dalam recruitment process di PT SSD. 
+
+Berikut soal yang diberikan
+
+Anda dihadapkan dengan project dimana memiliki data penjualan dengan informasi
+sebagai berikut :
+Data Barang : Nama, Kategori, Jumlah Barang, Keterangan
+Data Pembeli : Nama, Nomor Identitas, Jenis Kelamin, Alamat, Nomor HP
+Data Penjualan : Barang, Pembeli, Jumlah Beli, Tanggal Beli, Lokasi Toko
+Data Toko : Nama Toko, Alamat Toko
+1. Buatkan struktur tabel untuk empat data yang dibutuhkan dengan konsep relasional
+database yang baik dan benar.
+2. Bila dihadapkan dengan jumlah data dimana data penjualan berjumlah 50 Juta,
+bagaimana membuat sebuah skema database yang tepat agar pembagian beban
+baik itu ketika data diinput/diambil bisa memenuhi SLA < 1 detik. (Misalkan : Zonasi
+based on lokasi toko dsb)
+
+
+Jawaban : 
+
+nomor 1 :
+
+untuk database yang saya gunakan adalah jenis relational database yang mana saya menggunakan PostgreSQL 
+Data Barang :
+SQL : create table barang (
+    id_barang serial primary key,
+    nama_barang varchar(255) not null,
+    kategori varchar(100),
+    jumlah_barang int not null,
+    keterangan text);
+
+Data pembeli :
+SQL : craete table pembeli (
+    id_pembeli serial primary key,
+    nama_pembeli varchar(255) not null,
+    nomor_identitas varchar(100) not null,
+    jenis_kelamin char(1) check (jenis_kelamin in ('M', 'F')),
+    alamat text,
+    nomor_hp varchar(20));
+
+Data Penjualan :
+SQL : create table penjualan (
+    id_penjualan serial primary key,
+    id_barang int references barang(id_barang) on delete cascade,
+    id_pembeli int refrences pembeli(id_pembeli) on delete cascade,
+    jumlah_beli int not null,
+    tanggal_beli date not null,
+    id_toko int references toko(id_toko) on delete cascade,
+    lokasi_toko text);
+
+Data Toko :
+SQL : create table toko (
+    id_toko serial primary key,
+    nama_toko varchar(255) not null,
+    alamat_toko text);
+
+nomor 2. 
+Ada beberapa cara yang bisa digunakan untuk mengatasi case tersebut.
+1. dengan menggunakan partisi table yang di bagi melalui lokasi toko.
+2. dengan memberikan index yang tepat.
+3. dengan optimisasi query. bisa menggunakan explain analyze.
+4. salah satunya zonasi database toko, misal dengan mereplicate server database ke datbase yang dekat dengan lokasi toko, jadi toko bisa dengan cepat mengambil data dari lokasi server local yang berdekatan.
+5. Menggunakan connection pooling untuk mengatur traffic agar lebih efisien.
+
+
+Sekian jawaban dari soal soal study case. semoga dapat diterima. Terimakasih.
